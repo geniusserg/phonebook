@@ -22,9 +22,10 @@ def init_db(name):
         return 1
 
 
-def append_db(name, surname, phone, birthday):
+def append_db(args):
     try:
-        cursor.execute("INSERT INTO phonebook VALUES (?,?,?,?)", [(name, surname, phone, birthday)])
+        list_to_append = tuple([args[i] for i in args])
+        cursor.execute("INSERT INTO phonebook VALUES (?,?,?,?)", list_to_append)
         db.commit()
     except:
         print("WARN: Unexpected error when inserting into database. Restart app and try it again")
@@ -35,14 +36,14 @@ def search_db(args):
         array = []
         for field in args:
             if args[field] != '':
-                runner += field + '= ? '
+                runner += field + '=? AND '
                 array.append(args[field])
-
-        cursor.execute(runner, list(tuple(array)))
+        runner = runner[:-4]
+        cursor.execute(runner, tuple(array))
         return cursor.fetchall()
-
     except:
-        print("WARN: Unexpected error when inserting into database. Restart app and try it again")
+        print("WARN: Unexpected error when searching into database. Restart app and try it again")
+        return []
 
 def output_db():
     try:
