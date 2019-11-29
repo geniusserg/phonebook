@@ -1,48 +1,39 @@
-class DataBase:
-    __list = [] #list of filelds Field
-    counter = 0
-    def __init__(self, file):
-        self.dbfile = open(file, 'r')
+import sqlite3
+import os
 
-        while True:
-            string = self.dbfile.readline()
-            field = {}
+cursor = object()
+db = object()
 
-            if string == '':
-                break
-            else:
-                field = parse(string)
+def init_db(name):
+    global cursor
+    global db
 
-            ret_code = self.addField(field)
-
-
-
-    def addField(self, args):
-        field = {}
-        self.counter += 1
-        field['id'] = self.counter
-
-        for i in args:
-            check_result = check(i, args[i])
-            if (check_result == ''):
-                field[i] = args[i]
-            else:
-                return check_result
-
-        self.__list.append(field)
+    db = sqlite3.connect(name)
+    if os.path.exists(name):
+        cursor = db.cursor()
+        cursor.execute(""" CREATE TABLE IF NOT EXISTS phonebook(
+                    name   TEXT,
+                    surname TEXT,
+                    phone   TEXT,
+                    birthday    TEXT
+                )""")
+        return 0
+    else:
+        return 1
 
 
-
-def parse(string):
-    records = string.split('|')
-    field = dict()
-    field['name'] = records[0]
-    field['family'] = records[1]
-    field['phone'] = records[2]
-    field['type'] = records[3]
-    field['birthday'] = records[4]
-    return field
+def insert_db(name, surname, phone, birthday):
+    try:
+        cursor.executemany("INSERT INTO phonebook VALUES (?,?,?,?)", [(name, surname, phone, birthday)])
+        db.commit()
+    except:
+        print("WARN: Unexpected error when inserting into database. Restart app and try it again")
 
 
-def check(type, value):
-    return ''
+def output_db():
+    try:
+        cursor.execute("SELECT * FROM phonebook")
+        return cursor.fetchall()
+    except:
+        print("Unexpected error when output database. Restart app and try it again")
+
