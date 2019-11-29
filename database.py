@@ -52,3 +52,40 @@ def output_db():
     except:
         print("Unexpected error when output database. Restart app and try it again")
 
+def delete_db(args):
+    try:
+        runner = "DELETE FROM phonebook WHERE "
+        array = []
+        for field in args:
+            if args[field] != '':
+                runner += field + '=? AND '
+                array.append(args[field])
+        runner = runner[:-4]
+        cursor.execute(runner, tuple(array))
+        db.commit()
+        return 0
+    except:
+        print("WARN: Unexpected error when deleting into database. Restart app and try it again")
+        return 1
+
+def update_db(args, args_to_update):
+    try:
+        runner = "UPDATE phonebook SET "
+        array = []
+        for field in args_to_update:
+            if args_to_update[field] != '':
+                runner += field + '=? AND '
+                array.append(args_to_update[field])
+        runner = runner[:-4]
+        runner += ' WHERE '
+        for field in args:
+            if args[field] != '':
+                runner += field + '=? AND '
+                array.append(args[field])
+        runner = runner[:-4]
+        cursor.execute(runner, tuple(array))
+        db.commit()
+        return 0
+    except:
+        print("WARN: Unexpected error when updating database. Restart app and try it again")
+        return 1

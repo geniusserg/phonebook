@@ -4,7 +4,6 @@ Describes the console behavior
 '''
 import database
 import os
-import sys
 import re
 import time
 
@@ -39,12 +38,15 @@ def output( arg ):
             print(record[0][:12], " "*(14-len(record[0])), record[1][:12]," "*(16-len(record[1])), record[2], " "*(15-len(record[2])),record[3])
 
 
-def check(args):
+def check(args, strong = True):
     def check_name(kind):
         name = args[kind]
         if (len(name) == 0):
-            print("Error: You should write {}!".format(kind))
-            return 1
+            if strong:
+                print("Error: You should write {}!".format(kind))
+                return 1
+            else:
+                return 0
         if (re.match(r'[^a-zA-Z0-9\s]', name)):
             print("Error in {} argument <{}> - use only latin literals, spaces and figures".format(kind, name))
             return 1
@@ -53,26 +55,41 @@ def check(args):
         except:
             if (name[0] != ' '):
                 name = name[0].upper() + name[1:]
-        args['name'] = name
+        args[kind] = name
 
+    ret_name = 0
     if 'name' in args:
-        check_name('name')
+        ret_name = check_name('name')
     if 'surname' in args:
-        check_name('surname')
+        ret_name = check_name('surname')
 
-    if 'phone' in args:
+    if (ret_name == 1):
+        return 1
+
+
+    def phone_check():
         phone = args['phone']
         if (len(phone) == 0):
-            print("Error: You should write phone!")
-            return 1
+            if strong:
+                print("Error: You should write phone!")
+                return 1
+            else:
+                return 0
         if (phone[0] == '+' and phone[1] == '7'):
-            phone = '8'+phone[2:]
+            phone = '8' + phone[2:]
         d = re.match(r'[0-9]{11}', phone)
         if (len(phone) == 11 and d):
             args['phone'] = phone
         else:
-            print("Error in phone argument <%s> - use only figures and length should be 11 figures".format(phone))
+            print("Error in phone argument <{}> - use only figures and length should be 11 figures".format(phone))
             return 1
+
+    ret_phone = 0
+    if 'phone' in args:
+        ret_phone = phone_check()
+    if (ret_phone == 1):
+        return 1
+
     expression_for_test="append name=Ir surname=Kl phone=78687790898"
     if 'birthday' in args and args['birthday'] != '':
             date = args['birthday']
@@ -84,10 +101,7 @@ def check(args):
             args['birthday'] = date
     return 0
 
-
-def append(string):
-    string = string[1:]
-    args = {'name': '', 'surname': '', 'phone': '', 'birthday': ''}
+def separate(string, args):
     for field in string:
         part = field.split('=')
         if part[0] not in args.keys():
@@ -97,11 +111,19 @@ def append(string):
             print("Incorrect sintaxys", part, ". Type 'help append' for more information")
             return 1
         args[part[0]] = part[1]
+    return args
+
+def append(string):
+    string = string[1:]
+    args = {'name': '', 'surname': '', 'phone': '', 'birthday': ''}
+    args = separate(string, args)
+    if args == 1:
+        return 1
     ret_code = check(args)
     if (ret_code == 0):
-        if (len(database.search_db(args)) != 0):
+        if (len(database.search_db({'name':args['name'], 'surname':args['surname']})) != 0):
             print("Record with the same name and surname is already in phonebook.")
-            output(database.search_db(args))
+            output(database.search_db({'name':args['name'], 'surname':args['surname']}))
             print()
             print("You can change the value of current field with 'update' command. Type 'help update'")
         else:
@@ -111,26 +133,60 @@ def append(string):
 
 
 def search(string):
+    string = string[1:]
     args = {'name': '', 'surname': '', 'phone': '', 'birthday': ''}
-    for field in string:
-        part = field.split('=')
-        if part[0] not in args.keys():
-            print("Unknown argument", part[0], ". Type 'help search' for more information")
-        if len(part) != 2:
-            print("Incorrect sintaxys", part, ". Type 'help search' for more information")
-        args[part[0]] = part[1]
-    ret_code = check(args)
+    args = separate(string, args)
+    if args == 1:
+        return 1
+    ret_code = check(args, strong = False)
     if (ret_code == 0):
-        output (database.search_db())
+        output(database.search_db(args))
 
 
 
-def delete(args):
-    pass
+def delete(string):
+    string = string[1:]
+    args = {'name': '', 'surname': ''}
+    args = separate(string, args)
+    if args == 1:
+        return 1
+    ret_code = check(args, strong=True)
+    if ret_code == 0:
+        if len(database.search_db(args)) != 0:
+            ret_code = database.delete_db(args)
+            if ret_code == 0:
+                print("Record deleted sucessfully!")
+            else:
+                pass
+        else:
+            print("We can not find the record with the same name and surname.")
 
 
-def update(args):
-    pass
+def update(string):
+    string = string[1:]
+    args = {'name': '', 'surname': ''}
+    args = separate(string, args)
+    if args == 1:
+        return 1
+    ret_code = check(args, strong=True)
+    if ret_code == 0:
+        if len(database.search_db(args)) != 0:
+            args_to_update = {'name': '', 'surname': '', 'phone': '', 'birthday': ''}
+            print("Now input your changes:")
+            changes = [part for part in input().split(' ') if part != '']
+            args_to_update = separate(changes,  args_to_update)
+            if args_to_update == 1:
+                return 1
+            ret_code = check(args_to_update, strong=False)
+            if ret_code == 1:
+                return 1
+            ret_code = database.update_db(args, args_to_update)
+            if ret_code == 0:
+                print("Record updated sucessfully!")
+            else:
+                pass
+        else:
+            print("We can not find the record with the same name and surname.")
 
 
 def execute(str):
@@ -141,7 +197,7 @@ def execute(str):
         output( database.output_db() )
     elif str[0] == "append":
         append(str)
-    elif str[0] == "find":
+    elif str[0] == "search":
         search(str)
     elif str[0] == "delete":
         delete(str)
