@@ -22,13 +22,27 @@ def init_db(name):
         return 1
 
 
-def insert_db(name, surname, phone, birthday):
+def append_db(name, surname, phone, birthday):
     try:
-        cursor.executemany("INSERT INTO phonebook VALUES (?,?,?,?)", [(name, surname, phone, birthday)])
+        cursor.execute("INSERT INTO phonebook VALUES (?,?,?,?)", [(name, surname, phone, birthday)])
         db.commit()
     except:
         print("WARN: Unexpected error when inserting into database. Restart app and try it again")
 
+def search_db(args):
+    try:
+        runner = "SELECT * FROM phonebook WHERE "
+        array = []
+        for field in args:
+            if args[field] != '':
+                runner += field + '= ? '
+                array.append(args[field])
+
+        cursor.execute(runner, list(tuple(array)))
+        return cursor.fetchall()
+
+    except:
+        print("WARN: Unexpected error when inserting into database. Restart app and try it again")
 
 def output_db():
     try:
