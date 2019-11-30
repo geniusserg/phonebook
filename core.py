@@ -8,7 +8,7 @@ import re
 import time
 import datetime
 
-def open():
+def init():
     ret_code = 2
     while ret_code:
         if (ret_code == 1):
@@ -25,9 +25,18 @@ def open():
 
 
 def print_help():
-    print("""
-    HELP
-    """)
+    try:
+        pfile = open("help.txt", "r")
+        print('---------------HELP------------------\n')
+        for line in pfile.readlines():
+            print(line, end='')
+        pfile.close()
+        print('---------------HELP--------------------')
+    except:
+        print("Something went wrong when opening file help. Please check it out that this file is located at the current directory.")
+
+
+
 
 
 def output(arg, id = False , add_age = False):
@@ -306,6 +315,8 @@ def execute(str):
             print(res[0] , "is", res[1], "years old")
     elif str[0] == "compare":
         compare_age(str)
+    elif str[0] == "help":
+        print_help()
     else:
         print("Incorrect syntaxis of the command: ", str[0], ". Type help for tips")
 

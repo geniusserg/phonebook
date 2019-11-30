@@ -2,10 +2,10 @@ import core
 import sys
 
 if __name__ == "__main__":
-    print("PhoneBook v1.0, Danilov Sergey. 6th Group IAD. ")
-    core.open()
+    print("LabWork_1_PhoneBook. Danilov Sergey. 6th Group IAD")
+    core.init()
     print("Database has been loaded sucessfully")
-    core.print_help()
+    print("Type 'help' to open instruction of all functions of the program or 'quit' to exit. Have fun!")
     while True:
         print(">>> ", end = '')
         command = input()
