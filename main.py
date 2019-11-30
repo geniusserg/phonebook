@@ -12,6 +12,10 @@ if __name__ == "__main__":
         if command == "quit" or command == "q":
             sys.exit(0)
         else:
-            core.execute(command)
+            try:
+                core.execute(command)
+            except:
+                print("Unexpected error while executing '{}' command. Please, send respond about error on issues page in git repository")
+
 
 

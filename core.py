@@ -68,7 +68,7 @@ def check(args, strong = True):
                 return 1
             else:
                 return 0
-        if (re.match(r'[^a-zA-Z0-9\s]', name)):
+        if (re.search(r'[^a-zA-Z0-9\s]', name)):
             print("Error in {} argument <{}> - use only latin literals, spaces and figures".format(kind, name))
             return 1
         try:
@@ -181,8 +181,9 @@ def search(string):
                         result.append(item)
                 except:
                     pass
-
-        output(result)
+            output(result)
+        else:
+            output(database.search_db(args))
 
 
 def age(string):
@@ -195,7 +196,10 @@ def age(string):
     if ret_code == 0:
         out = database.search_db(args)
         currentDate = datetime.datetime.today().date()
-        if (out[0][3] == ''):
+        if(len(out) == 0):
+            print("Contact with given name and surname is not found")
+            return -1
+        if (len(out[0])==4 and out[0][3] == ''):
             print("Error, birthday is not defined for this record")
             return -1
         birthDate = datetime.datetime.strptime(out[0][3], "%d.%m.%Y").date()
@@ -224,7 +228,7 @@ def delete(string):
     if args['name'] == '' and args['surname'] == '' and args['phone'] != '':
         ret_code = check(args, strong=False)
     else:
-        args['phone'] == ''
+        del args['phone']
         ret_code = check(args, strong=True)
     if ret_code == 0:
         dbsearchres = database.search_db(args)
@@ -235,11 +239,12 @@ def delete(string):
                 chosen_id = int(input())
                 if (chosen_id >= 0 and chosen_id < len(dbsearchres)):
                     chosenrecord = dbsearchres[chosen_id]
-                    ret_code = database.delete_db({'name': chosenrecord[0], 'surname': chosenrecord[0], 'phone': chosenrecord[2], 'birthday': chosenrecord[3]})
+                    ret_code = database.delete_db({'name': chosenrecord[0], 'surname': chosenrecord[1], 'phone': chosenrecord[2], 'birthday': chosenrecord[3]})
                 else:
                     print("Chose right id of record. Try again!")
                     return 0
-            ret_code = database.delete_db(args)
+            else:
+                ret_code = database.delete_db(args)
             if ret_code == 0:
                 print("Record deleted sucessfully!")
             else:
@@ -283,10 +288,16 @@ def compare_age(string):
         return 1
     if args['key'][0] == 'b' or args['key'][0] == 'l' or args['key'][0] == 'e':
         try:
-            int(args['key'][1:])
+            int_age = int(args['key'][1:])
+            if int_age < 0:
+                print("Error in parametr age <{}>, do not use negative number. See help for a solution this problem".format(args['key']))
+                return 1
         except:
             print("Error in parametr age <{}>. See help for a solution this problem".format(args['key']))
             return 1
+    else:
+        print("Error in parametr age <{}>. See help for a solution this problem".format(args['key']))
+        return 1
     result = []
     for record in database.output_db():
         if (record[3] != ''):
