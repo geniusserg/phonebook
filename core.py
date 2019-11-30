@@ -30,21 +30,24 @@ def print_help():
     """)
 
 
-def output( arg, id = False ):
+def output(arg, id = False , add_age = False):
     output = arg
     __id = -1
+    __age = ''
     if (len(output) == 0):
         print("Nothing to show!")
     else:
-        print("..................................................................")
+        print("........................................................................")
         print("     Name     :     Family     :     Phone     :     Birthday     ")
-        print("..................................................................")
+        print("........................................................................")
         for record in output:
             if (id):
                 __id += 1
             else:
                 __id = ''
-            print(__id,':',record[0][:12], " "*(10-len(record[0])), record[1][:12]," "*(16-len(record[1])), record[2], " "*(15-len(record[2])),record[3])
+            if add_age == True:
+                __age = '('+str(age(['age', 'name='+record[0], 'surname='+record[1]])[1])+'y)'
+            print(__id,':',record[0][:12], " "*(10-len(record[0])), record[1][:12]," "*(16-len(record[1])), record[2], " "*(15-len(record[2])),record[3],' ',__age)
 
 
 def check(args, strong = True):
@@ -262,6 +265,26 @@ def update(string):
         else:
             print("We can not find the record with the same name and surname.")
 
+def compare_age(string):
+    string = string[1:]
+    args = {'key': ''}
+    args = separate(string, args)
+    age_input = int(args['key'][1:])
+    if args == 1:
+        return 1
+    if args['key'][0] == 'b' or args['key'][0] == 'l' or args['key'][0] == 'e':
+        try:
+            int(args['key'][1:])
+        except:
+            print("Error in parametr age <{}>. See help for a solution this problem".format(args['key']))
+            return 1
+    result = []
+    for record in database.output_db():
+        if (record[3] != ''):
+            current_age = age(['age', 'name='+record[0], 'surname='+record[1]])[1]
+            if args['key'][0] == 'b' and current_age > age_input or args['key'][0] == 'l' and current_age < age_input or args['key'][0] == 'e' and current_age == age_input:
+                result.append(record)
+    output(result, add_age = True)
 
 def execute(str):
     str = [i for i in str.split(' ') if i != '']
@@ -281,6 +304,8 @@ def execute(str):
         res = age(str)
         if res != -1:
             print(res[0] , "is", res[1], "years old")
+    elif str[0] == "compare":
+        compare_age(str)
     else:
         print("Incorrect syntaxis of the command: ", str[0], ". Type help for tips")
 
