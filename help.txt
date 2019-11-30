@@ -1,0 +1,42 @@
+>>> output
+This command shows the phonebook
+
+>>> append name=xxx surname=xxx phone=XXX [birthday=DD.MM.YYYY]
+This command appends in phonebook new field if there are not similar.
+
+>>> search [name=xxx surname=xxx phone=XXX birthday=DD.MM.YYYY]
+This command searches records with the same parametres.all parametres are not necessary
+
+>>> delete name=xxx surname=xxx 
+This command deletes the record with the same name and surname.
+
+Also you can type:
+>>> delete phone=xxx
+in this case program will offer several records to delete and you can choose the right one.
+
+>>> update name=xxx surname=xxx
+This command set parametres of record with the defined name and surname
+after typing this command the program will offer type the changes you want. For example
+	>>> update name=Li surname=Shu
+	Now input your changes:
+	: name=Ju phone=89764560938
+
+>>> age name=xxx surname=xxx
+This command shows age of the person
+
+>>>compare key=Yxx
+This command shows the record of the phonebook of people who are older\younger\have the same age then given age.
+If you want to find people who aged more than parameter, you can type this:
+   >>>compare key=b12 (for example, older 12 years)
+in the same way:
+   >>>compare key=l30 (younger 30 years)
+   >>>compare key=e22 (who are 22 years old)
+
+>>>quit
+This command closes the program
+
+>>>help
+This command shows this help page
+
+
+ 
