@@ -6,7 +6,7 @@ import database
 import os
 import re
 import time
-
+import datetime
 
 def open():
     ret_code = 2
@@ -105,10 +105,14 @@ def check(args, strong = True):
             try:
                 valid_date = time.strptime(date, '%d.%m.%Y')
             except ValueError:
-                try:
-                    valid_date = time.strptime(date, '%d.%m')
-                except ValueError:
-                    print("Error in phone argument {} - date should be in format DD.MM.YYYY or DD.MM".format(date))
+                if strong == False:
+                    try:
+                        valid_date = time.strptime(date, '%d.%m')
+                    except ValueError:
+                        print("Error in phone argument {} - date should be in format DD.MM.YYYY".format(date))
+                        return 1
+                else:
+                    print("Error in phone argument {} - date should be in format DD.MM.YYYY".format(date))
                     return 1
             args['birthday'] = date
     return 0
@@ -165,7 +169,38 @@ def search(string):
                         result.append(item)
                 except:
                     pass
+
         output(result)
+
+
+def age(string):
+    string = string[1:]
+    args = {'name': '', 'surname': ''}
+    args = separate(string, args)
+    if args == 1:
+        return 1
+    ret_code = check(args, strong=True)
+    if ret_code == 0:
+        out = database.search_db(args)
+        currentDate = datetime.datetime.today().date()
+        if (out[0][3] == ''):
+            print("Error, birthday is not defined for this record")
+            return -1
+        birthDate = datetime.datetime.strptime(out[0][3], "%d.%m.%Y").date()
+        age = currentDate.year - birthDate.year
+        monthVeri = currentDate.month - birthDate.month
+        dateVeri = currentDate.day - birthDate.day
+        age = int(age)
+        monthVeri = int(monthVeri)
+        dateVeri = int(dateVeri)
+        if monthVeri < 0:
+            age = age - 1
+        elif dateVeri < 0 and monthVeri == 0:
+            age = age - 1
+        return [args['name']+' '+args['surname'], age]
+    else:
+        print("Error, incorrect arguments are given")
+        return -1
 
 
 def delete(string):
@@ -242,6 +277,10 @@ def execute(str):
         delete(str)
     elif str[0] == "update":
         update(str)
+    elif str[0] == "age":
+        res = age(str)
+        if res != -1:
+            print(res[0] , "is", res[1], "years old")
     else:
         print("Incorrect syntaxis of the command: ", str[0], ". Type help for tips")
 
