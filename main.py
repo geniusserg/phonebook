@@ -4,7 +4,9 @@ import os
 
 if __name__ == "__main__":
     print("LabWork_1_PhoneBook. Danilov Sergey. 6th Group IAD")
-    if (os.environ["TEST_PY"] == 1):
+    for i in sys.argv:
+        print(i)
+    if (sys.argv[3] == "artem_test"):
         core.help()
         exit(0)
         
