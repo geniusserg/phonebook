@@ -5,7 +5,7 @@ import os
 if __name__ == "__main__":
     print("LabWork_1_PhoneBook. Danilov Sergey. 6th Group IAD")  
     if (os.environ["TEST_PY"]):
-        core.help()
+        core.print_help()
         sys.exit(0)
     core.init()
     print("Database has been loaded sucessfully")
