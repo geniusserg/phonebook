@@ -10,4 +10,7 @@ python:
 # command to run tests
 install: pip install --upgrade pip
 script:
+  - export TEST_PY=1
+  - echo $TEST_PY
+  - echo "START"
   - python main.py
