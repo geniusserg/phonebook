@@ -3,13 +3,8 @@ import sys
 import os
 
 if __name__ == "__main__":
-    print("LabWork_1_PhoneBook. Danilov Sergey. 6th Group IAD")
-    for i in sys.argv:
-        print(i)
-    if (sys.argv[1] == "artem_test"):
-        core.help()
-        exit(0)
-        
+    print("LabWork_1_PhoneBook. Danilov Sergey. 6th Group IAD")  
+    ptint (os.environ["TEST_PY"])
     core.init()
     print("Database has been loaded sucessfully")
     print("Type 'help' to open instruction of all functions of the program or 'quit' to exit. Have fun!")
