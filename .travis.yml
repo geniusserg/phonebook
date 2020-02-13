@@ -9,8 +9,7 @@ python:
   - "4.0"
 # command to run tests
 install: pip install --upgrade pip
+env:
+  - TEST_PY=1
 script:
-  - export TEST_PY=1
-  - echo $TEST_PY
-  - echo "START"
   - python main.py
