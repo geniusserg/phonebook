@@ -18,8 +18,10 @@ def init():
             user_input = input()
             if (user_input == ""):
                 ret_code = database.init_db("phonebook.db")
-            else:
+            elif (os.path.exists(user_input)):
                 ret_code = database.init_db(user_input)
+            else:
+                ret_code = 1
         else:
             ret_code = database.init_db("phonebook.db")
 
