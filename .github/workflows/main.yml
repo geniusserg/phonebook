@@ -28,5 +28,5 @@ jobs:
     - name: Build docker
       run: docker build -t app .
     - name: Start docker
-      run: docker run -it app 
+      run: docker run -t app 
 
