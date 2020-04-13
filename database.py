@@ -8,8 +8,11 @@ def init_db(name):
     global cursor
     global db
 
-    db = sqlite3.connect(name)
     if os.path.exists(name):
+        try:
+            db = sqlite3.connect(name)
+        except(Exception):
+            return 1
         cursor = db.cursor()
         cursor.execute(""" CREATE TABLE IF NOT EXISTS phonebook(
                     name   TEXT,
@@ -22,13 +25,22 @@ def init_db(name):
         return 1
 
 
-def append_db(args):
+def append_db(args, args_db = []):
+    if args_db == []:
+        global db
+        global cursor
+    else:
+        db = args_db[0]
+        cursor = args_db[1]
+
     try:
-        list_to_append = tuple([args[i] for i in args])
-        cursor.execute("INSERT INTO phonebook VALUES (?,?,?,?)", list_to_append)
+        list_to_append = [args[i] for i in args]
+        query = tuple(list_to_append)
+        cursor.execute("INSERT INTO phonebook VALUES (?,?,?,?)", query)
         db.commit()
     except:
-        print("WARN: Unexpected error when inserting into database. Restart app and try it again")
+        return 1
+    return 0
 
 def search_db(args):
     try:
@@ -42,7 +54,6 @@ def search_db(args):
         cursor.execute(runner, tuple(array))
         return cursor.fetchall()
     except:
-        print("WARN: Unexpected error when searching into database. Restart app and try it again")
         return []
 
 def output_db():

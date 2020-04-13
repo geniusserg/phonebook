@@ -14,14 +14,22 @@ def init():
         if (ret_code == 1):
             print("Something went wrong while opening database. Try again!")
         if not (os.path.exists("phonebook.db")) or ret_code == 1:
-            print("Enter the name of phonebook you want to use or leave it empty to create new. To close program type here command - exit")
-            user_input = input()
-            if (user_input == ""):
-                ret_code = database.init_db("phonebook.db")
+            print("Enter the name of phonebook you want to use or leave 'new' to create new. To close program type here command - exit")
+            user_input = str(input())
+            if (user_input == "new\r" or user_input == "new"):
+                print("\nPrint name for new database")
+                user_input = input()
+                try:
+                    ret_code = database.init_db(user_input)
+                except:
+                    ret_code=1            
             elif (os.path.exists(user_input)):
-                ret_code = database.init_db(user_input)
+                try:
+                    ret_code = database.init_db(user_input)
+                except:
+                    ret_code=1
             else:
-                ret_code = 1
+                ret_code=1
         else:
             ret_code = database.init_db("phonebook.db")
 
