@@ -40,4 +40,4 @@ jobs:
     steps:
     - name: Check code style
       
-      run: pip install pep8; pep8 ./main.py ./database.py ./core.py
+      run: pip install pep8; python -m pep8 ./main.py ./database.py ./core.py
