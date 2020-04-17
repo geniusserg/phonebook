@@ -38,6 +38,9 @@ jobs:
   codeStyleCheck:
     runs-on: [ubuntu-latest]
     steps:
-    - name: Check code style
-      
-      run: pip install pep8; python -m pep8 ./main.py ./database.py ./core.py
+    - name: Update sources 
+      uses: actions/checkout@v2 
+    - name: Preparation
+      run: pip install pep8
+    - name: checking
+      run: python -m pep8 ./main.py ./database.py ./core.py
