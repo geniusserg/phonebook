@@ -21,17 +21,23 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Update sources 
       uses: actions/checkout@v2   
-    - name: Build docker
-      run: docker build -t app --file Dockerfile.app .
-    - name: Build tests
+    - name: Build docker with debug version for smoke test
+      run: docker build -t smoke_test_app --file Dockerfile.smoke .
+    - name: Build tests docker image
       run: docker build -t test_app --file Dockerfile.tests .
-    - name: Start docker
-      run: docker run -t app 
-    - name: Start testz
+    - name: Start docker with smoke test
+      run: docker run -t smoke_test_app 
+    - name: Start testz 
       run: docker run -t test_app
-    - name: Code style checking
-      run: pip install pep8; pep8 ./main.py ./database.py ./core.py
     - name: Build package for deploying
       run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
-    - name: Deploy package
+    - name: Deploy ready package
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin;   docker push serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
+  
+  
+  codeStyleCheck:
+    runs-on: [ubuntu-latest]
+    steps:
+    - name: Check code style
+      
+      run: pip install pep8; pep8 ./main.py ./database.py ./core.py
