@@ -1,3 +1,3 @@
 FROM python:3.7.2-alpine3.8
 COPY . .
-CMD ["python", "./main.py"]
+CMD ["python", "./main.py", "debug"]
