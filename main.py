@@ -12,7 +12,7 @@ if __name__ == "__main__":
     print("Type 'help' to open instruction of all functions of the program or 'quit' to exit. Have fun!")
     while True:
         print(">>> ", end = '')
-        if (if (len(sys.argv)>1):
+        if (len(sys.argv) > 1):
             if sys.argv[1] != "debug":
                 command = input()
             else:
