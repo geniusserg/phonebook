@@ -6,9 +6,9 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/github_workflow]
   pull_request:
-    branches: [ master ]
+    branches: [ master, feature/github_workflow ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -19,14 +19,19 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-
-    # Runs a single command using the runners shell
-    - name: Begin work
-      run: echo Hello, world!
-    
+    - name: Update sources 
+      uses: actions/checkout@v2   
     - name: Build docker
-      run: docker build -t app .
+      run: docker build -t app --file Dockerfile.app .
+    - name: Build tests
+      run: docker build -t test_app --file Dockerfile.tests .
     - name: Start docker
       run: docker run -t app 
-
+    - name: Start testz
+      run: docker run -t test_app
+    - name: Code style checking
+      run: pip install pep8; pep8 ./main.py ./database.py ./core.py
+    - name: Build package for deploying
+      run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
+    - name: Deploy package
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin;   docker push serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
