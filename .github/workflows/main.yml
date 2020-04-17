@@ -32,7 +32,7 @@ jobs:
     - name: Build package for deploying
       run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
     - name: Deploy ready package
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin;   docker push serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin;   docker push ${{ secrets.DOCKER_USERNAME }}/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
   
   
   codeStyleCheck:
