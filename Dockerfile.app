@@ -1,3 +1,4 @@
 FROM python:3.7.2-alpine3.8
+ARG DEBUG_KEY
 COPY . .
-CMD ["python", "./main.py"]
+ENTRYPOINT python ./main.py $DEBUG_KEY
