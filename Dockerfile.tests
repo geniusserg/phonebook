@@ -1,5 +1,6 @@
 FROM python:3.7.2-alpine3.8
+ARG TEST_CASE
 COPY . .
-CMD ["python", "-m", "unittest", $TEST_CASE]
+CMD [ "python3.7", "-m", "unittest", $TEST_CASE ]
 
 
