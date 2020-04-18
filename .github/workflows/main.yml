@@ -44,11 +44,14 @@ jobs:
       run: pip install pycodestyle; touch /tmp/phonebook-codestyle.txt
     - name: Check main module
       run: python -m pycodestyle ./main.py >> /tmp/phonebook-codestyle.txt 2>&1
+      continue-on-error: true
     - name: Check database module
       if: always()
+      continue-on-error: true
       run: python -m pycodestyle ./database.py >> /tmp/phonebook-codestyle.txt 2>&1
     - name: Check interface module
       if: always()
+      continue-on-error: true
       run: python -m pycodestyle ./core.py >> /tmp/phonebook-codestyle.txt 2>&1
     - name: Publish artifacts
       if: always()
