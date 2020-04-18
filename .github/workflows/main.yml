@@ -28,9 +28,9 @@ jobs:
     - name: Start docker with smoke test
       run: docker run -t smoke_test_app 
     - name: Start test (step1) Database functionality
-      run: docker run -t test_app --env TEST_CASE="test.TestDatabase"
+      run: docker run --env TEST_CASE="test.TestDatabase" -t test_app
     - name: Start test (step1) Database functionality
-      run: docker run -t test_app --env TEST_CASE="test.TestInterface"
+      run: docker run --env TEST_CASE="test.TestInterface" -t test_app
     - name: Build package for deploying
       run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
     - name: Deploy ready package
