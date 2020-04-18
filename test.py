@@ -5,6 +5,7 @@ from time import strftime, gmtime
 import database
 import sys
 import datetime
+import core
 
 class TestDatabase(unittest.TestCase):
     filename = "" #linux
@@ -66,7 +67,18 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual([('k', 'k', 'l', 'k')], result, "right search")
 
 
-
-
+class TestInterface(unittest.TestCase):
+    def test_arg_format(self):
+        self.assertEqual(1, core.check({'name':'$%ET09'}), "checking name")
+    def test_phone_format(self):
+        self.assertEqual(1, core.check({'phone':'+70000000op09'}), "checking phone")
+    def test_birthday_format(self):
+        self.assertEqual(1, core.check({'birthday' : '12.22.3001'}), "checking bthday")
+    def test_arg_format_ok(self):
+        self.assertEqual(0, core.check({'name':'Vitalyu'}), "checking name")
+    def test_phone_format_ok(self):
+        self.assertEqual(0, core.check({'phone':'+79867678696'}), "checking phone")
+    def test_birthday_format_ok(self):
+        self.assertEqual(0, core.check({'birthday' : '12.12.2001'}), "checking bthday")
 if __name__ == '__main__':
     unittest.main()
