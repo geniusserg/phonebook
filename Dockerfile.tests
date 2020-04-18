@@ -1,6 +1,6 @@
 FROM python:3.7.2-alpine3.8
 ARG TEST_CASE
 COPY . .
-CMD [ "python3.7", "-m" , "unittest" , $TEST_CASE ]
+RUN python3.7 -m unittest $TEST_CASE
 
 
