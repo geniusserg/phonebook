@@ -41,7 +41,7 @@ jobs:
     - name: Update sources 
       uses: actions/checkout@v2 
     - name: Preparation for testing code style check
-      run: pip install pycodestyle
+      run: pip install pycodestyle; touch phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Check main module
       run: python -m pycodestyle ./main.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Check database module
