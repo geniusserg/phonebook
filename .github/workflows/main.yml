@@ -21,18 +21,16 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Update sources 
       uses: actions/checkout@v2   
-    - name: Build docker with debug version for smoke test
-      run: docker build -t smoke_test_app --file Dockerfile.smoke .
+    - name: Build application image
+      run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
     - name: Build tests docker image
       run: docker build -t test_app --file Dockerfile.tests .
-    - name: Start docker with smoke test
-      run: docker run -t smoke_test_app 
+    - name: Start application image with smoke test
+      run: docker run --env DEBUG_KEY="debug "-t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
     - name: Start test (step1) Database functionality
       run: docker run --env TEST_CASE="test.TestDatabase" -t test_app
     - name: Start test (step1) Database functionality
       run: docker run --env TEST_CASE="test.TestInterface" -t test_app
-    - name: Build package for deploying
-      run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
     - name: Deploy ready package
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin;   docker push ${{ secrets.DOCKER_USERNAME }}/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
   
@@ -42,7 +40,11 @@ jobs:
     steps:
     - name: Update sources 
       uses: actions/checkout@v2 
-    - name: Preparation
+    - name: Preparation for testing code style check
       run: pip install pep8
-    - name: checking
-      run: python -m pep8 ./main.py ./database.py ./core.py ./test.py
+    - name: Check main module
+      run: python -m pep8 ./main.py 
+    - name: Check database module
+      run: python -m pep8 ./database.py 
+    - name: Check interface module
+      run: python -m pep8 ./core.py 
