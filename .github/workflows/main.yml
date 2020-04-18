@@ -43,8 +43,16 @@ jobs:
     - name: Preparation for testing code style check
       run: pip install pep8
     - name: Check main module
-      run: python -m pep8 ./main.py 
+      run: python -m pep8 ./main.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Check database module
-      run: python -m pep8 ./database.py 
+      if: always()
+      run: python -m pep8 ./database.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Check interface module
-      run: python -m pep8 ./core.py 
+      if: always()
+      run: python -m pep8 ./core.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: codestyle
+        path: math-homework.txt
+
