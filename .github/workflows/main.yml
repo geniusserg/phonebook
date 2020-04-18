@@ -43,13 +43,13 @@ jobs:
     - name: Preparation for testing code style check
       run: pip install pycodestyle; touch /tmp/phonebook-codestyle.txt
     - name: Check main module
-      run: python -m pycodestyle ./main.py >> /tmp/phonebook-codestyle.txt 2>/dev/null
+      run: python -m pycodestyle ./main.py >> /tmp/phonebook-codestyle.txt 2>&1
     - name: Check database module
       if: always()
-      run: python -m pycodestyle ./database.py >> /tmp/phonebook-codestyle.txt 2>/dev/null
+      run: python -m pycodestyle ./database.py >> /tmp/phonebook-codestyle.txt 2>&1
     - name: Check interface module
       if: always()
-      run: python -m pycodestyle ./core.py >> /tmp/phonebook-codestyle.txt 2>/dev/null
+      run: python -m pycodestyle ./core.py >> /tmp/phonebook-codestyle.txt 2>&1
     - name: Publish artifacts
       if: always()
       uses: actions/upload-artifact@v1
