@@ -41,18 +41,19 @@ jobs:
     - name: Update sources 
       uses: actions/checkout@v2 
     - name: Preparation for testing code style check
-      run: pip install pep8
+      run: pip install pycodestyle
     - name: Check main module
-      run: python -m pep8 ./main.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
+      run: python -m pycodestyle ./main.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Check database module
       if: always()
-      run: python -m pep8 ./database.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
+      run: python -m pycodestyle ./database.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Check interface module
       if: always()
-      run: python -m pep8 ./core.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
+      run: python -m pycodestyle ./core.py >> phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
     - name: Publish artifacts
+      if: always()
       uses: actions/upload-artifact@v1
       with:
         name: codestyle
-        path: math-homework.txt
+        path: phonebook-2020.beta01-$GITHUB_RUN_NUMBER-codestyle.txt
 
