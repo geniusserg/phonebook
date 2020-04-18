@@ -27,8 +27,10 @@ jobs:
       run: docker build -t test_app --file Dockerfile.tests .
     - name: Start docker with smoke test
       run: docker run -t smoke_test_app 
-    - name: Start testz 
-      run: docker run -t test_app
+    - name: Start test (step1) Database functionality
+      run: docker run -t test_app --env TEST_CASE="test.TestDatabase"
+    - name: Start test (step1) Database functionality
+      run: docker run -t test_app --env TEST_CASE="test.TestInterface"
     - name: Build package for deploying
       run: docker build . --file Dockerfile.app -t serfdanilov/phonebook:2020.beta01-$GITHUB_RUN_NUMBER
     - name: Deploy ready package
@@ -43,4 +45,4 @@ jobs:
     - name: Preparation
       run: pip install pep8
     - name: checking
-      run: python -m pep8 ./main.py ./database.py ./core.py
+      run: python -m pep8 ./main.py ./database.py ./core.py ./test.py
